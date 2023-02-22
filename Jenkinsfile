@@ -11,29 +11,36 @@ pipeline {
             }
         }
         steps {
-      	    sh 'mvn ${env.MAVEN_PACKAGE_OPTIONS} clean package'
+            script {
+                def options = params.MAVEN_PACKAGE_OPTIONS ? "${params.MAVEN_PACKAGE_OPTIONS}" : ""
+
+      	        sh 'mvn ${options} clean package'
+            }
         }
     }
     stage('Docker Build & Local Deploy') {
         agent any
         steps {
             script {
+                def imageName = "${params.IMAGE_NAME}:${env.BUILD_NUMBER}"
                 try {
                     // Build image to local repository
-                    sh 'docker build \
-                    --tag ${env.IMAGE_NAME}:${env.BUILD_NUMBER} \
-                    --build-arg JAR_FILE=target/uber/uber-*.jar \
-                    --file build/docker/Dockerfile .'
+                    sh '''
+                    docker build                                        \
+                        --tag ${imageName}                              \
+                        --build-arg JAR_FILE=target/uber/uber-*.jar     \
+                        --file build/docker/Dockerfile .
+                    '''
 
                     // Tag image to local registry
-                    sh 'docker tag ${env.IMAGE_NAME}:${env.BUILD_NUMBER} registry:5000/${env.IMAGE_NAME}:${env.BUILD_NUMBER}'
+                    sh 'docker tag ${imageName} registry:5000/${imageName}'
 
                     // Push to local registry
-                    sh 'docker push registry:5000/${env.IMAGE_NAME}:${env.BUILD_NUMBER}'
+                    sh 'docker push registry:5000/${imageName}'
                 } finally {
                     sh '''#!/bin/bash
-                        if [[ "$(docker images -q ${env.IMAGE_NAME}:${env.BUILD_NUMBER} 2> /dev/null)" != "" ]]; then
-                            docker rmi -f $(docker images -q ${env.IMAGE_NAME}:${env.BUILD_NUMBER})
+                        if [[ "$(docker images -q ${imageName} 2> /dev/null)" != "" ]]; then
+                            docker rmi -f $(docker images -q ${imageName})
                         fi
                     '''
                 }
