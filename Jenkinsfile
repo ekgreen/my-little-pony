@@ -14,5 +14,14 @@ pipeline {
       	    sh 'mvn clean install'
         }
     }
+    stage('Docker Build') {
+        agent any
+        steps {
+            sh 'docker build \
+                --tag my-little-pony-service:1 \
+                --build-arg JAR_FILE=target/uber/uber-*.jar \
+                --file build/docker/Dockerfile .'
+        }
+    }
   }
 }
