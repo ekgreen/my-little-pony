@@ -23,6 +23,8 @@ pipeline {
         steps {
             script {
                 def imageName = "${params.IMAGE_NAME}:${env.BUILD_NUMBER}"
+                echo "Image name: ${imageName}"
+
                 try {
                     // Build image to local repository
                     sh '''
