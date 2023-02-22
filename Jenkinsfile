@@ -27,12 +27,10 @@ pipeline {
 
                 try {
                     // Build image to local repository
-                    sh '''
-                    docker build                                        \
+                    sh 'docker build                                    \
                         --tag ${imageName}                              \
                         --build-arg JAR_FILE=target/uber/uber-*.jar     \
-                        --file build/docker/Dockerfile .
-                    '''
+                        --file build/docker/Dockerfile .'
 
                     // Tag image to local registry
                     sh 'docker tag ${imageName} registry:5000/${imageName}'
