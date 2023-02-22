@@ -31,8 +31,7 @@ pipeline {
                     // Push to local registry
                     sh 'docker push registry:5000/my-little-pony-service:1'
                 } finally {
-                    sh '''
-                        #!/bin/bash
+                    sh '''#!/bin/bash
                         if [[ "$(docker images -q my-little-pony-service:1 2> /dev/null)" != "" ]]; then
                             docker rmi -f $(docker images -q my-little-pony-service:1)
                         fi
