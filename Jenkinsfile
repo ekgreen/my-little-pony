@@ -21,19 +21,19 @@ pipeline {
                 try {
                     // Build image to local repository
                     sh 'docker build \
-                    --tag ${env.IMAGE_NAME}:{env.BUILD_NUMBER} \
+                    --tag ${env.IMAGE_NAME}:${env.BUILD_NUMBER} \
                     --build-arg JAR_FILE=target/uber/uber-*.jar \
                     --file build/docker/Dockerfile .'
 
                     // Tag image to local registry
-                    sh 'docker tag ${env.IMAGE_NAME}:{env.BUILD_NUMBER} registry:5000/${env.IMAGE_NAME}:{env.BUILD_NUMBER}'
+                    sh 'docker tag ${env.IMAGE_NAME}:${env.BUILD_NUMBER} registry:5000/${env.IMAGE_NAME}:${env.BUILD_NUMBER}'
 
                     // Push to local registry
-                    sh 'docker push registry:5000/${env.IMAGE_NAME}:{env.BUILD_NUMBER}'
+                    sh 'docker push registry:5000/${env.IMAGE_NAME}:${env.BUILD_NUMBER}'
                 } finally {
                     sh '''#!/bin/bash
-                        if [[ "$(docker images -q ${env.IMAGE_NAME}:{env.BUILD_NUMBER} 2> /dev/null)" != "" ]]; then
-                            docker rmi -f $(docker images -q ${env.IMAGE_NAME}:{env.BUILD_NUMBER})
+                        if [[ "$(docker images -q ${env.IMAGE_NAME}:${env.BUILD_NUMBER} 2> /dev/null)" != "" ]]; then
+                            docker rmi -f $(docker images -q ${env.IMAGE_NAME}:${env.BUILD_NUMBER})
                         fi
                     '''
                 }
