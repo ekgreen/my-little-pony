@@ -1,4 +1,4 @@
 server:
   servlet:
     context-path: /pony
-  port: 8081
+  port: ${SERVER_PORT:8080}
