@@ -14,7 +14,7 @@ pipeline {
             script {
                 def options = params.MAVEN_PACKAGE_OPTIONS ? "${params.MAVEN_PACKAGE_OPTIONS}" : ""
 
-      	        sh 'mvn ${options} clean package'
+      	        sh "mvn ${options} clean package"
             }
         }
     }
